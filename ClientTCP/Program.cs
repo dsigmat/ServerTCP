@@ -12,16 +12,16 @@ namespace ClientTCP
             const string ip = "127.0.0.1";
             const int port = 8080;
 
-            var tcpEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-            var tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            var udpEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+            var udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             Console.WriteLine("ВВЕДИТЕ СООБЩЕНИЕ: ");
             var messages = Console.ReadLine();
 
             var data = Encoding.UTF8.GetBytes(messages);
-            tcpSocket.Connect(tcpEndPoint);
+            udpSocket.Connect(udpEndPoint);
 
-            tcpSocket.Send(data);
+            udpSocket.Send(data);
 
             var buffer = new byte[256];
             var size = 0;
@@ -29,12 +29,14 @@ namespace ClientTCP
 
             do
             {
-                size = tcpSocket.Receive(buffer);
+                size = udpSocket.Receive(buffer);
                 answer.Append(Encoding.UTF8.GetString(buffer, 0, size));
             }
-            while (tcpSocket.Available > 0);
+            while (udpSocket.Available > 0);
 
-
+            Console.WriteLine(answer.ToString());
+            udpSocket.Shutdown(SocketShutdown.Both);
+            udpSocket.Close();
         }
     }
 }
